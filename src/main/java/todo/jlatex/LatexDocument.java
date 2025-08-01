@@ -31,6 +31,11 @@ public class LatexDocument {
 	return this;
     }
 
+    public final LatexDocument emptyLine() {
+	addLine(LatexLine.newLine());
+	return this;
+    }
+
     public final LatexDocument usePackage(final String packageName) {
 	addLine(LatexCommand.get("usepackage", packageName));
 	return this;
@@ -41,19 +46,34 @@ public class LatexDocument {
 	return this;
     }
 
-    public final LatexDocument beginDocument() {
-	addLine(LatexCommand.get("begin", "document"));
+    public final LatexDocument beginEnvironment(final String environmentName, final String... arguments) {
+	if (environmentName.isEmpty() || environmentName.isBlank()) {
+	    throw new IllegalArgumentException("Environment name must not be empty");
+	}
+	addLine(LatexCommand.get(String.format("begin{%s}", environmentName), arguments));
 	return this;
     }
 
-    public final LatexDocument emptyLine() {
-	addLine(LatexLine.newLine());
+    public final LatexDocument beginEnvironment(final String environmentName, final Optional<String> optionalArgument,
+	    final String... arguments) {
+	if (environmentName.isEmpty() || environmentName.isBlank()) {
+	    throw new IllegalArgumentException("Environment name must not be empty");
+	}
+	addLine(LatexCommand.get(String.format("begin{%s}", environmentName), optionalArgument, arguments));
 	return this;
+    }
+
+    public final LatexDocument endEnvironment(final String environmentName) {
+	addLine(LatexCommand.get("end", environmentName));
+	return this;
+    }
+
+    public final LatexDocument beginDocument() {
+	return beginEnvironment("document");
     }
 
     public final LatexDocument endDocument() {
-	addLine(LatexCommand.get("end", "document"));
-	return this;
+	return endEnvironment("document");
     }
 
     @Override

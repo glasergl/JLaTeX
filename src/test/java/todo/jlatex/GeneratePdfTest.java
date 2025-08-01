@@ -11,7 +11,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-class LatexCompilerInvocationTest {
+class GeneratePdfTest {
     @Test
     void test() {
 	final LatexDocument d = new LatexDocument("article");

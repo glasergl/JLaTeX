@@ -54,8 +54,7 @@ public class LatexDocument {
 	return this;
     }
 
-    public final LatexDocument beginEnvironment(final String environmentName, final Optional<String> optionalArgument,
-	    final String... arguments) {
+    public final LatexDocument beginEnvironment(final String environmentName, final Optional<String> optionalArgument, final String... arguments) {
 	if (environmentName.isEmpty() || environmentName.isBlank()) {
 	    throw new IllegalArgumentException("Environment name must not be empty");
 	}

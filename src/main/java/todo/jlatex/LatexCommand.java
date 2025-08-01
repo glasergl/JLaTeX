@@ -23,8 +23,7 @@ public final class LatexCommand extends LatexLine {
 	return new LatexCommand(commandName, Optional.empty(), arguments);
     }
 
-    public static LatexCommand get(final String commandName, final Optional<String> optionalArgument,
-	    final String... arguments) {
+    public static LatexCommand get(final String commandName, final Optional<String> optionalArgument, final String... arguments) {
 	return new LatexCommand(commandName, optionalArgument, arguments);
     }
 }

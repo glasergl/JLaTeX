@@ -37,6 +37,8 @@ public class LatexDocument {
     }
 
     /**
+     * @param documentClass
+     * @param documentClassOptions
      * @see #LatexDocument(String)
      * @see #LatexDocument(String, String)
      */
@@ -87,6 +89,9 @@ public class LatexDocument {
     /**
      * Overloaded method with optional argument to be added in square brackets
      * 
+     * @param packageName
+     * @param optionalArgument
+     * @return This for method chaining
      * @see #usePackage(String)
      */
     public final LatexDocument usePackage(final String packageName, final String optionalArgument) {
@@ -117,6 +122,10 @@ public class LatexDocument {
      * optional argument is empty, the method behaves exactly as
      * {@link #beginEnvironment(String, String...)}.
      * 
+     * @param environmentName
+     * @param optionalArgument
+     * @param arguments
+     * @return This for method chaining
      * @see #beginEnvironment(String, String...)
      */
     public final LatexDocument beginEnvironment(final String environmentName, final Optional<String> optionalArgument, final String... arguments) {

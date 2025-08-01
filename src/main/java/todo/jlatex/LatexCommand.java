@@ -7,6 +7,9 @@ import java.util.Optional;
  */
 public final class LatexCommand extends LatexLine {
     /**
+     * @param commandName
+     * @param optionalArgument
+     * @param arguments
      * @see #get(String, String...)
      * @see #get(String, Optional, String...)
      */
@@ -42,9 +45,12 @@ public final class LatexCommand extends LatexLine {
      * argument. If the optional argument is empty, this behaves exactly as
      * {@link #get(String, String...)}.
      * 
-     * @see #get(String, String...)
+     * @param commandName
+     * @param optionalArgument
+     * @param arguments
      * @return Representation of
      *         \commandName[optionalArgument]{argument1}{argument2}...
+     * @see #get(String, String...)
      */
     public static LatexCommand get(final String commandName, final Optional<String> optionalArgument, final String... arguments) {
 	return new LatexCommand(commandName, optionalArgument, arguments);

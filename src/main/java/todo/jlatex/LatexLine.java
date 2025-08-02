@@ -13,7 +13,7 @@ public class LatexLine {
      *                                  single line
      */
     protected final void addContent(final String content) {
-	if (content.contains("\\n")) {
+	if (content.contains("\n")) {
 	    throw new IllegalArgumentException("A line must not contain the new line character");
 	}
 	contentBuilder.append(content);

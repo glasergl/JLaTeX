@@ -38,25 +38,25 @@ public class LatexLine {
      * Formats the given string by replacing all '%' characters in it by the content
      * of the given commands (in order)
      * 
-     * @param string   with '%' characters to be replaced by the content of latex
-     *                 commands
-     * @param commands to be inserted in the string
+     * @param string     with '%' characters to be replaced by the content of latex
+     *                   commands
+     * @param otherLines to be inserted in the string
      * @return LatexLine that contains the content of the given string where each
      *         '%' character got replaced by the content of the corresponding
      *         LatexCommand
      * @throws IllegalArgumentException If the amount of '%' characters in the
      *                                  string is more than the given commands.
      */
-    public static LatexLine format(final String string, final LatexCommand... commands) {
+    public static LatexLine format(final String string, final LatexLine... otherLines) {
 	final LatexLine formattedLine = new LatexLine();
 	int commandCounter = 0;
 	for (final char character : string.toCharArray()) {
 	    if (character != '%') {
 		formattedLine.addContent(String.valueOf(character));
-	    } else if (commandCounter >= commands.length) {
+	    } else if (commandCounter >= otherLines.length) {
 		throw new IllegalArgumentException("Not enough commands");
 	    } else {
-		formattedLine.addContent(commands[commandCounter].toString());
+		formattedLine.addContent(otherLines[commandCounter].toString());
 		commandCounter++;
 	    }
 	}

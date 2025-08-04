@@ -9,8 +9,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Invokes the latex compiler to build the PDF for a LatexDocument
@@ -26,7 +24,6 @@ public final class GeneratePdf {
     private final String pathToLatexCompiler;
     private final int numberOfLatexCompilerInvocations;
     private final String outputBuildDirectoryName;
-    private final long timeoutSeconds;
     private final List<ProcessResult> latexCompilerProcessResults;
 
     /**
@@ -40,13 +37,10 @@ public final class GeneratePdf {
      * @param outputBuildDirectoryName         where the compiler will produce
      *                                         output files, too, will be deleted
      *                                         after the compiler invocations
-     * @param timeoutSeconds                   after the process is terminated
-     *                                         automatically, because it is assumed
-     *                                         to be an error
      * @see #invokeLatexCompiler()
      */
-    public GeneratePdf(final LatexDocument document, final String pdfFileName, final String pathToLatexCompiler, final int numberOfLatexCompilerInvocations, final String outputBuildDirectoryName, final long timeoutSeconds) {
-	if (pdfFileName.isBlank() || pdfFileName.isEmpty() || pathToLatexCompiler.isEmpty() || pathToLatexCompiler.isBlank() || numberOfLatexCompilerInvocations < 1 || outputBuildDirectoryName.isBlank() || outputBuildDirectoryName.isEmpty() || timeoutSeconds < 1) {
+    public GeneratePdf(final LatexDocument document, final String pdfFileName, final String pathToLatexCompiler, final int numberOfLatexCompilerInvocations, final String outputBuildDirectoryName) {
+	if (pdfFileName.isBlank() || pdfFileName.isEmpty() || pathToLatexCompiler.isEmpty() || pathToLatexCompiler.isBlank() || numberOfLatexCompilerInvocations < 1 || outputBuildDirectoryName.isBlank() || outputBuildDirectoryName.isEmpty()) {
 	    throw new IllegalArgumentException();
 	}
 	this.document = document;
@@ -54,7 +48,6 @@ public final class GeneratePdf {
 	this.pathToLatexCompiler = pathToLatexCompiler;
 	this.numberOfLatexCompilerInvocations = numberOfLatexCompilerInvocations;
 	this.outputBuildDirectoryName = outputBuildDirectoryName;
-	this.timeoutSeconds = timeoutSeconds;
 	this.latexCompilerProcessResults = invokeLatexCompiler();
     }
 
@@ -65,11 +58,10 @@ public final class GeneratePdf {
      * 
      * @param document
      * @param pdfFileName
-     * @param timeoutSeconds
-     * @see #GeneratePdf(LatexDocument, String, String, int, String, long)
+     * @see #GeneratePdf(LatexDocument, String, String, int, String)
      */
-    public GeneratePdf(final LatexDocument document, final String pdfFileName, final long timeoutSeconds) {
-	this(document, pdfFileName, DEFAULT_PATH_TO_LATEX_COMPILER, DEFAULT_NUMBER_OF_LATEX_COMPILER_INVOCATIONS, DEFAULT_BUILD_DIRECTORY_NAME, timeoutSeconds);
+    public GeneratePdf(final LatexDocument document, final String pdfFileName) {
+	this(document, pdfFileName, DEFAULT_PATH_TO_LATEX_COMPILER, DEFAULT_NUMBER_OF_LATEX_COMPILER_INVOCATIONS, DEFAULT_BUILD_DIRECTORY_NAME);
     }
 
     /**
@@ -77,11 +69,10 @@ public final class GeneratePdf {
      * "generated-document.pdf"
      * 
      * @param document
-     * @param timeoutSeconds
-     * @see #GeneratePdf(LatexDocument, String, long)
+     * @see #GeneratePdf(LatexDocument, String)
      */
-    public GeneratePdf(final LatexDocument document, final long timeoutSeconds) {
-	this(document, DEFAULT_PDF_FILE_NAME, timeoutSeconds);
+    public GeneratePdf(final LatexDocument document) {
+	this(document, DEFAULT_PDF_FILE_NAME);
     }
 
     /**
@@ -131,13 +122,11 @@ public final class GeneratePdf {
     private ProcessResult startLatexCompilerProcess(final String pathOfTemporaryTexFile) throws IOException, InterruptedException {
 	final List<String> latexCompilerInvocationCommands = List.of(pathToLatexCompiler, "-interaction=nonstopmode", String.format("-output-directory=%s", outputBuildDirectoryName), pathOfTemporaryTexFile);
 	final ProcessBuilder latexCompilerInvocationBuilder = new ProcessBuilder(latexCompilerInvocationCommands);
+	latexCompilerInvocationBuilder.redirectErrorStream(true);
 	final Process latexCompilerInvocation = latexCompilerInvocationBuilder.start();
-	final boolean successfulExecution = latexCompilerInvocation.waitFor(timeoutSeconds, TimeUnit.SECONDS);
-	if (!successfulExecution) {
-	    latexCompilerInvocation.destroyForcibly();
-	}
-	final Optional<Integer> exitCode = successfulExecution ? Optional.of(latexCompilerInvocation.exitValue()) : Optional.empty();
-	return new ProcessResult(exitCode, getStandardOutputStreamContent(latexCompilerInvocation));
+	final String latexCompilerOutput = getStandardOutputStreamContent(latexCompilerInvocation);
+	final int exitCode = latexCompilerInvocation.waitFor();
+	return new ProcessResult(exitCode, latexCompilerOutput);
     }
 
     /**
@@ -190,13 +179,12 @@ public final class GeneratePdf {
     /**
      * Class to represent the required information of a process execution
      */
-    public record ProcessResult(Optional<Integer> exitCode, String outputStreamContent) {
+    public record ProcessResult(int exitCode, String outputStreamContent) {
 	/**
-	 * @return Whether there was an exit code (process did not timeout) and the exit
-	 *         code is 0
+	 * @return Whether the exit code is 0
 	 */
 	public boolean successful() {
-	    return exitCode.isPresent() && exitCode.get() == 0;
+	    return exitCode == 0;
 	}
     }
 }

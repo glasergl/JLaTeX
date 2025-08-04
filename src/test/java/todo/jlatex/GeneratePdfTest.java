@@ -2,13 +2,13 @@ package todo.jlatex;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
@@ -27,10 +27,10 @@ class GeneratePdfTest {
 		.line("I like Spaghetti with Tomato Sauce.")
 		.line(LatexLine.f("My favourite command is either this $%$ or that $%$", LatexCommand.c("frac", "2\\pi", "3"), LatexCommand.c("textbf", "abcd")))
 		.endDocument();
-	final GeneratePdf l = new GeneratePdf(d, 20L);
+	final GeneratePdf l = new GeneratePdf(d);
 
 	for (final ProcessResult latexCompilerProcessResult : l.getProcessResults()) {
-	    assertEquals(Optional.of(0), latexCompilerProcessResult.exitCode());
+	    assertEquals(0, latexCompilerProcessResult.exitCode());
 	}
 	assertTrue(Files.exists(Path.of("./generated-document.pdf")));
 	assertFalse(Files.exists(Path.of("./build/")));
@@ -46,24 +46,8 @@ class GeneratePdfTest {
     void testErrorExecutionWithNonExistingCompiler() {
 	final LatexDocument d = new LatexDocument("article");
 	d.beginDocument().line("Hello").endDocument();
-	final GeneratePdf l = new GeneratePdf(d, "generated-document", "pdflatex42", 4, "build", 7L);
+	final GeneratePdf l = new GeneratePdf(d, "generated-document", "pdflatex42", 4, "build");
 	assertTrue(l.getProcessResults().isEmpty());
-	assertFalse(Files.exists(Path.of("./generated-document.pdf")));
-	assertFalse(Files.exists(Path.of("./build/")));
-	assertFalse(Files.exists(Path.of("./generated-document.tex")));
-    }
-
-    @Test
-    void testErrorExecutionWithTooShortTimeout() {
-	final LatexDocument d = new LatexDocument("article");
-	d.beginDocument();
-	for (int i = 0; i < 1_000_000; i++) {
-	    d.line(LatexLine.f("$i=%$", LatexCommand.c("frac", "1", String.valueOf(i))));
-	}
-	d.endDocument();
-	final GeneratePdf l = new GeneratePdf(d, 1L);
-	assertEquals(1, l.getProcessResults().size());
-	assertTrue(l.getProcessResults().get(0).exitCode().isEmpty());
 	assertFalse(Files.exists(Path.of("./generated-document.pdf")));
 	assertFalse(Files.exists(Path.of("./build/")));
 	assertFalse(Files.exists(Path.of("./generated-document.tex")));
@@ -72,11 +56,11 @@ class GeneratePdfTest {
     @Test
     void testErrorExecutionWithIllegalLatexCode() {
 	final LatexDocument d = new LatexDocument("article").beginDocument().emptyLine();
-	final GeneratePdf l = new GeneratePdf(d, 10L);
+	final GeneratePdf l = new GeneratePdf(d);
 	assertEquals(1, l.getProcessResults().size());
 	for (final ProcessResult latexCompilerProcessResult : l.getProcessResults()) {
-	    final Optional<Integer> exitCode = latexCompilerProcessResult.exitCode();
-	    assertTrue(exitCode.isEmpty() || exitCode.get() != 0);
+	    final int exitCode = latexCompilerProcessResult.exitCode();
+	    assertNotEquals(0, exitCode);
 	}
 	assertFalse(Files.exists(Path.of("./generated-document.pdf")));
 	assertFalse(Files.exists(Path.of("./build/")));

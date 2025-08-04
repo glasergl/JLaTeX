@@ -47,7 +47,7 @@ public class LatexLine {
      * @throws IllegalArgumentException If the amount of '%' characters in the
      *                                  string is more than the given commands.
      */
-    public static LatexLine format(final String string, final LatexLine... otherLines) {
+    public static LatexLine f(final String string, final LatexLine... otherLines) {
 	final LatexLine formattedLine = new LatexLine();
 	int commandCounter = 0;
 	for (final char character : string.toCharArray()) {

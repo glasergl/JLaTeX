@@ -10,8 +10,8 @@ public final class LatexCommand extends LatexLine {
      * @param commandName
      * @param optionalArgument
      * @param arguments
-     * @see #get(String, String...)
-     * @see #get(String, Optional, String...)
+     * @see #c(String, String...)
+     * @see #c(String, Optional, String...)
      */
     private LatexCommand(final String commandName, final Optional<String> optionalArgument, final String... arguments) {
 	if (arguments.length > 9) {
@@ -36,23 +36,23 @@ public final class LatexCommand extends LatexLine {
      * @param arguments   for each, a {argument} will be appended
      * @return Representation of \commandName{argument1}{argument2}...
      */
-    public static LatexCommand get(final String commandName, final String... arguments) {
+    public static LatexCommand c(final String commandName, final String... arguments) {
 	return new LatexCommand(commandName, Optional.empty(), arguments);
     }
 
     /**
      * Adds an optional argument in square brackets before the first required
      * argument. If the optional argument is empty, this behaves exactly as
-     * {@link #get(String, String...)}.
+     * {@link #c(String, String...)}.
      * 
      * @param commandName
      * @param optionalArgument
      * @param arguments
      * @return Representation of
      *         \commandName[optionalArgument]{argument1}{argument2}...
-     * @see #get(String, String...)
+     * @see #c(String, String...)
      */
-    public static LatexCommand get(final String commandName, final Optional<String> optionalArgument, final String... arguments) {
+    public static LatexCommand c(final String commandName, final Optional<String> optionalArgument, final String... arguments) {
 	return new LatexCommand(commandName, optionalArgument, arguments);
     }
 }

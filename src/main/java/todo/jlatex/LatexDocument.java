@@ -43,7 +43,7 @@ public class LatexDocument {
      * @see #LatexDocument(String, String)
      */
     protected LatexDocument(final String documentClass, final Optional<String> documentClassOptions) {
-	line(LatexCommand.get("documentclass", documentClassOptions, documentClass));
+	line(LatexCommand.c("documentclass", documentClassOptions, documentClass));
     }
 
     /**
@@ -82,7 +82,7 @@ public class LatexDocument {
      * @return This for method chaining
      */
     public final LatexDocument usePackage(final String packageName) {
-	line(LatexCommand.get("usepackage", packageName));
+	line(LatexCommand.c("usepackage", packageName));
 	return this;
     }
 
@@ -95,7 +95,7 @@ public class LatexDocument {
      * @see #usePackage(String)
      */
     public final LatexDocument usePackage(final String packageName, final String optionalArgument) {
-	line(LatexCommand.get("usepackage", Optional.of(optionalArgument), packageName));
+	line(LatexCommand.c("usepackage", Optional.of(optionalArgument), packageName));
 	return this;
     }
 
@@ -112,7 +112,7 @@ public class LatexDocument {
 	if (environmentName.isEmpty() || environmentName.isBlank()) {
 	    throw new IllegalArgumentException("Environment name must not be empty");
 	}
-	line(LatexCommand.get(String.format("begin{%s}", environmentName), arguments));
+	line(LatexCommand.c(String.format("begin{%s}", environmentName), arguments));
 	return this;
     }
 
@@ -132,7 +132,7 @@ public class LatexDocument {
 	if (environmentName.isEmpty() || environmentName.isBlank()) {
 	    throw new IllegalArgumentException("Environment name must not be empty");
 	}
-	line(LatexCommand.get(String.format("begin{%s}", environmentName), optionalArgument, arguments));
+	line(LatexCommand.c(String.format("begin{%s}", environmentName), optionalArgument, arguments));
 	return this;
     }
 
@@ -146,7 +146,7 @@ public class LatexDocument {
 	if (environmentName.isEmpty() || environmentName.isBlank()) {
 	    throw new IllegalArgumentException("Environment name must not be empty");
 	}
-	line(LatexCommand.get("end", environmentName));
+	line(LatexCommand.c("end", environmentName));
 	return this;
     }
 

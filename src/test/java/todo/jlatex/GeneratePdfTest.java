@@ -22,10 +22,10 @@ class GeneratePdfTest {
 		.usePackage("amsmath")
 		.usePackage("graphicx")
 		.beginDocument()
-		.line(LatexCommand.format("$%$", LatexCommand.get("frac", "1", "2")))
+		.line(LatexCommand.f("$%$", LatexCommand.c("frac", "1", "2")))
 		.emptyLine()
 		.line("I like Spaghetti with Tomato Sauce.")
-		.line(LatexLine.format("My favourite command is either this $%$ or that $%$", LatexCommand.get("frac", "2\\pi", "3"), LatexCommand.get("textbf", "abcd")))
+		.line(LatexLine.f("My favourite command is either this $%$ or that $%$", LatexCommand.c("frac", "2\\pi", "3"), LatexCommand.c("textbf", "abcd")))
 		.endDocument();
 	final GeneratePdf l = new GeneratePdf(d, 20L);
 
@@ -58,7 +58,7 @@ class GeneratePdfTest {
 	final LatexDocument d = new LatexDocument("article");
 	d.beginDocument();
 	for (int i = 0; i < 1_000_000; i++) {
-	    d.line(LatexLine.format("$i=%$", LatexCommand.get("frac", "1", String.valueOf(i))));
+	    d.line(LatexLine.f("$i=%$", LatexCommand.c("frac", "1", String.valueOf(i))));
 	}
 	d.endDocument();
 	final GeneratePdf l = new GeneratePdf(d, 1L);

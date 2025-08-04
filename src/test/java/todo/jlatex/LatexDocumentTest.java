@@ -13,12 +13,12 @@ class LatexDocumentTest {
 	d.usePackage("babel", "english")
 		.usePackage("amsmath")
 		.beginDocument()
-		.line(LatexCommand.format("$%$", LatexCommand.get("frac", "1", "2")))
+		.line(LatexCommand.f("$%$", LatexCommand.c("frac", "1", "2")))
 		.emptyLine()
 		.line("I like Spaghetti with Tomato Sauce.")
-		.line(LatexLine.format("My favourite command is either this $%$ or that $%$", LatexCommand.get("frac", "2\\pi", "3"), LatexCommand.get("textbf", "abcd")))
+		.line(LatexLine.f("My favourite command is either this $%$ or that $%$", LatexCommand.c("frac", "2\\pi", "3"), LatexCommand.c("textbf", "abcd")))
 		.beginEnvironment("figure", Optional.of("h"))
-		.line(LatexCommand.get("includegraphics", Optional.of("width=0.9\\textwidth"), "./path/to/figure.png"))
+		.line(LatexCommand.c("includegraphics", Optional.of("width=0.9\\textwidth"), "./path/to/figure.png"))
 		.endEnvironment("figure")
 		.endDocument();
 	final String latex = d.toString();

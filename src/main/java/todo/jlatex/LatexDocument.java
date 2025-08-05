@@ -32,7 +32,7 @@ public class LatexDocument {
      * @param documentClass
      * @param documentClassOptions
      */
-    public LatexDocument(final String documentClass, final String documentClassOptions) {
+    public LatexDocument(final String documentClass, final Object documentClassOptions) {
 	this(documentClass, Optional.of(documentClassOptions));
     }
 
@@ -40,32 +40,45 @@ public class LatexDocument {
      * @param documentClass
      * @param documentClassOptions
      * @see #LatexDocument(String)
-     * @see #LatexDocument(String, String)
+     * @see #LatexDocument(String, Object)
      */
-    protected LatexDocument(final String documentClass, final Optional<String> documentClassOptions) {
-	line(LatexCommand.c("documentclass", documentClassOptions, documentClass));
+    protected LatexDocument(final String documentClass, final Optional<Object> documentClassOptions) {
+	line(LatexCommand.command("documentclass", documentClassOptions, documentClass));
     }
 
     /**
-     * @param line - to be appended
+     * @param command - to be appended
      * @return This for method chaining
      */
-    public final LatexDocument line(final LatexLine line) {
-	lines.add(line);
+    public final LatexDocument line(final LatexCommand command) {
+	lines.add(command);
 	return this;
     }
 
     /**
-     * Adds a line of plain text to the document
-     * 
-     * @param line
+     * @param string          - will be split according to \n and then all %
+     *                        replaced by the given lines, e.g., commands
+     * @param insertedObjects which will be inserted for % symbols, i.e., their
+     *                        toString() representation
      * @return This for method chaining
-     * @throws IllegalArgumentException If the line contains \n
      */
-    public final LatexDocument line(final String line) {
-	final LatexLine sentence = new LatexLine();
-	sentence.addContent(line);
-	line(sentence);
+    public final LatexDocument format(final String string, final Object... insertedObjects) {
+	final String[] lines = string.split("\n");
+	int commandCounter = 0;
+	for (final String line : lines) {
+	    final LatexLine formattedLine = new LatexLine();
+	    for (final char character : line.toCharArray()) {
+		if (character != '%') {
+		    formattedLine.addContent(String.valueOf(character));
+		} else if (commandCounter >= insertedObjects.length) {
+		    throw new IllegalArgumentException("Not enough commands");
+		} else {
+		    formattedLine.addContent(insertedObjects[commandCounter].toString());
+		    commandCounter++;
+		}
+	    }
+	    this.lines.add(formattedLine);
+	}
 	return this;
     }
 
@@ -73,7 +86,7 @@ public class LatexDocument {
      * @return This for method chaining
      */
     public final LatexDocument emptyLine() {
-	line(LatexLine.emptyLine());
+	this.lines.add(LatexLine.emptyLine());
 	return this;
     }
 
@@ -82,7 +95,7 @@ public class LatexDocument {
      * @return This for method chaining
      */
     public final LatexDocument usePackage(final String packageName) {
-	line(LatexCommand.c("usepackage", packageName));
+	line(LatexCommand.command("usepackage", packageName));
 	return this;
     }
 
@@ -94,8 +107,8 @@ public class LatexDocument {
      * @return This for method chaining
      * @see #usePackage(String)
      */
-    public final LatexDocument usePackage(final String packageName, final String optionalArgument) {
-	line(LatexCommand.c("usepackage", Optional.of(optionalArgument), packageName));
+    public final LatexDocument usePackage(final String packageName, final Object optionalArgument) {
+	line(LatexCommand.command("usepackage", Optional.of(optionalArgument), packageName));
 	return this;
     }
 
@@ -108,11 +121,11 @@ public class LatexDocument {
      * @return This for method chaining
      * @throws IllegalArgumentException If the environmentName is empty
      */
-    public final LatexDocument beginEnvironment(final String environmentName, final String... arguments) {
+    public final LatexDocument beginEnvironment(final String environmentName, final Object... arguments) {
 	if (environmentName.isEmpty() || environmentName.isBlank()) {
 	    throw new IllegalArgumentException("Environment name must not be empty");
 	}
-	line(LatexCommand.c(String.format("begin{%s}", environmentName), arguments));
+	line(LatexCommand.command(String.format("begin{%s}", environmentName), arguments));
 	return this;
     }
 
@@ -128,11 +141,11 @@ public class LatexDocument {
      * @return This for method chaining
      * @see #beginEnvironment(String, String...)
      */
-    public final LatexDocument beginEnvironment(final String environmentName, final Optional<String> optionalArgument, final String... arguments) {
+    public final LatexDocument beginEnvironment(final String environmentName, final Optional<Object> optionalArgument, final Object... arguments) {
 	if (environmentName.isEmpty() || environmentName.isBlank()) {
 	    throw new IllegalArgumentException("Environment name must not be empty");
 	}
-	line(LatexCommand.c(String.format("begin{%s}", environmentName), optionalArgument, arguments));
+	line(LatexCommand.command(String.format("begin{%s}", environmentName), optionalArgument, arguments));
 	return this;
     }
 
@@ -146,7 +159,7 @@ public class LatexDocument {
 	if (environmentName.isEmpty() || environmentName.isBlank()) {
 	    throw new IllegalArgumentException("Environment name must not be empty");
 	}
-	line(LatexCommand.c("end", environmentName));
+	line(LatexCommand.command("end", environmentName));
 	return this;
     }
 

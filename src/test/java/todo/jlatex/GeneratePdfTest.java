@@ -22,10 +22,10 @@ class GeneratePdfTest {
 		.usePackage("amsmath")
 		.usePackage("graphicx")
 		.beginDocument()
-		.line(LatexCommand.f("$%$", LatexCommand.c("frac", "1", "2")))
+		.format("$%$", LatexCommand.command("frac", "1", "2"))
 		.emptyLine()
-		.line("I like Spaghetti with Tomato Sauce.")
-		.line(LatexLine.f("My favourite command is either this $%$ or that $%$", LatexCommand.c("frac", "2\\pi", "3"), LatexCommand.c("textbf", "abcd")))
+		.format("I like Spaghetti with Tomato Sauce.")
+		.format("My favourite command is either this $%$ or that $%$", LatexCommand.command("frac", "2\\pi", "3"), LatexCommand.command("textbf", "abcd"))
 		.endDocument();
 	final GeneratePdf l = new GeneratePdf(d);
 
@@ -45,7 +45,7 @@ class GeneratePdfTest {
     @Test
     void testErrorExecutionWithNonExistingCompiler() {
 	final LatexDocument d = new LatexDocument("article");
-	d.beginDocument().line("Hello").endDocument();
+	d.beginDocument().format("Hello").endDocument();
 	final GeneratePdf l = new GeneratePdf(d, "generated-document", "pdflatex42", 4, "build");
 	assertTrue(l.getProcessResults().isEmpty());
 	assertFalse(Files.exists(Path.of("./generated-document.pdf")));

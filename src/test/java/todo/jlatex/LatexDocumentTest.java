@@ -1,5 +1,6 @@
 package todo.jlatex;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
@@ -13,12 +14,12 @@ class LatexDocumentTest {
 	d.usePackage("babel", "english")
 		.usePackage("amsmath")
 		.beginDocument()
-		.line(LatexCommand.f("$%$", LatexCommand.c("frac", "1", "2")))
+		.format("$%$", LatexCommand.command("frac", "1", "2"))
 		.emptyLine()
-		.line("I like Spaghetti with Tomato Sauce.")
-		.line(LatexLine.f("My favourite command is either this $%$ or that $%$", LatexCommand.c("frac", "2\\pi", "3"), LatexCommand.c("textbf", "abcd")))
+		.format("I like Spaghetti with Tomato Sauce.")
+		.format("My favourite command is either this $%$ or that $%$", LatexCommand.command("frac", "2\\pi", "3"), LatexCommand.command("textbf", "abcd"))
 		.beginEnvironment("figure", Optional.of("h"))
-		.line(LatexCommand.c("includegraphics", Optional.of("width=0.9\\textwidth"), "./path/to/figure.png"))
+		.line(LatexCommand.command("includegraphics", Optional.of("width=0.9\\textwidth"), "./path/to/figure.png"))
 		.endEnvironment("figure")
 		.endDocument();
 	final String latex = d.toString();
@@ -29,5 +30,27 @@ class LatexDocumentTest {
 	assertTrue(latex.contains("\\begin{figure}[h]"));
 	assertTrue(latex.contains("\\includegraphics[width=0.9\\textwidth]{./path/to/figure.png}"));
 	assertTrue(latex.contains("\\end{figure}"));
+    }
+
+    @Test
+    void testFormatWithMoreLines() {
+	final LatexDocument d = new LatexDocument("article");
+	d.beginDocument().format("""
+		abcd
+		abasd123
+
+		$%$
+				""", LatexCommand.command("frac", 1, 2));
+	d.endDocument();
+	final String latex = d.toString();
+	final String[] lines = latex.split(System.lineSeparator());
+	assertEquals(7, lines.length);
+	assertEquals("\\documentclass{article}", lines[0]);
+	assertEquals("\\begin{document}", lines[1]);
+	assertEquals("abcd", lines[2]);
+	assertEquals("abasd123", lines[3]);
+	assertEquals("", lines[4]);
+	assertEquals("$\\frac{1}{2}$", lines[5]);
+	assertEquals("\\end{document}", lines[6]);
     }
 }

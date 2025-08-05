@@ -57,7 +57,8 @@ public class LatexDocument {
 
     /**
      * @param string          - will be split according to \n and then all %
-     *                        replaced by the given lines, e.g., commands
+     *                        replaced by the given objects, e.g., commands, numbers
+     *                        etc.
      * @param insertedObjects which will be inserted for % symbols, i.e., their
      *                        toString() representation
      * @return This for method chaining

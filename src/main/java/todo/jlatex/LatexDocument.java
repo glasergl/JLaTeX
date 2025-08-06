@@ -58,7 +58,8 @@ public class LatexDocument {
     /**
      * @param string          - will be split according to \n and then all %
      *                        replaced by the given objects, e.g., commands, numbers
-     *                        etc.
+     *                        etc. two consecutive % will be replaced not by a
+     *                        command but by a single % symbol
      * @param insertedObjects which will be inserted for % symbols, i.e., their
      *                        toString() representation
      * @return This for method chaining
@@ -68,9 +69,14 @@ public class LatexDocument {
 	int commandCounter = 0;
 	for (final String line : lines) {
 	    final LatexLine formattedLine = new LatexLine();
-	    for (final char character : line.toCharArray()) {
+	    final char[] characters = line.toCharArray();
+	    for (int i = 0; i < characters.length; i++) {
+		final char character = characters[i];
 		if (character != '%') {
 		    formattedLine.addContent(String.valueOf(character));
+		} else if (i < characters.length - 1 && characters[i + 1] == '%') {
+		    formattedLine.addContent(String.valueOf(character));
+		    i++;
 		} else if (commandCounter >= insertedObjects.length) {
 		    throw new IllegalArgumentException("Not enough commands");
 		} else {

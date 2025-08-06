@@ -53,4 +53,24 @@ class LatexDocumentTest {
 	assertEquals("$\\frac{1}{2}$", lines[5]);
 	assertEquals("\\end{document}", lines[6]);
     }
+
+    @Test
+    void testFormatWithDoublePercent() {
+	final LatexDocument d = new LatexDocument("book");
+	d.beginDocument().format("""
+		%% asd
+		%%abcd
+		$%$
+				""", LatexCommand.command("frac", 1, 2));
+	d.endDocument();
+	final String latex = d.toString();
+	final String[] lines = latex.split(System.lineSeparator());
+	assertEquals(6, lines.length);
+	assertEquals("\\documentclass{book}", lines[0]);
+	assertEquals("\\begin{document}", lines[1]);
+	assertEquals("% asd", lines[2]);
+	assertEquals("%abcd", lines[3]);
+	assertEquals("$\\frac{1}{2}$", lines[4]);
+	assertEquals("\\end{document}", lines[5]);
+    }
 }

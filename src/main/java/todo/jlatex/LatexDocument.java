@@ -50,7 +50,7 @@ public class LatexDocument {
      * @param command - to be appended
      * @return This for method chaining
      */
-    public final LatexDocument line(final LatexCommand command) {
+    public final LatexDocument line(final LatexLine command) {
 	lines.add(command);
 	return this;
     }
@@ -90,10 +90,24 @@ public class LatexDocument {
     }
 
     /**
+     * @param string to be split according to line breaks and each line added
+     * @return This for method chaining
+     */
+    public final LatexDocument plain(final String string) {
+	final String[] lines = string.split("\n");
+	for (final String line : lines) {
+	    final LatexLine latexLine = new LatexLine();
+	    latexLine.addContent(line);
+	    this.lines.add(latexLine);
+	}
+	return this;
+    }
+
+    /**
      * @return This for method chaining
      */
     public final LatexDocument emptyLine() {
-	this.lines.add(LatexLine.emptyLine());
+	lines.add(LatexLine.emptyLine());
 	return this;
     }
 

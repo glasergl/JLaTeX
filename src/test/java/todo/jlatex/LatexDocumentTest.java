@@ -1,6 +1,7 @@
 package todo.jlatex;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
@@ -72,5 +73,52 @@ class LatexDocumentTest {
 	assertEquals("%abcd", lines[3]);
 	assertEquals("$\\frac{1}{2}$", lines[4]);
 	assertEquals("\\end{document}", lines[5]);
+    }
+
+    @Test
+    void testFormatWithNotEnoughCommands() {
+	final LatexDocument d = new LatexDocument("book");
+	assertThrows(IllegalArgumentException.class, () -> {
+	    d.beginDocument().format("""
+	    	%% asd
+	    	$%$
+	    			""");
+	});
+    }
+
+    @Test
+    void testFormatWithTooManyCommands() {
+	final LatexDocument d = new LatexDocument("scrbook", "12pt");
+	d.beginDocument().format("""
+		%%abcd
+		$%$%%
+				""", LatexCommand.command("frac", 1, 2), LatexCommand.command("textbf", "test"));
+	d.endDocument();
+	final String latex = d.toString();
+	final String[] lines = latex.split(System.lineSeparator());
+	assertEquals(5, lines.length);
+	assertEquals("\\documentclass[12pt]{scrbook}", lines[0]);
+	assertEquals("\\begin{document}", lines[1]);
+	assertEquals("%abcd", lines[2]);
+	assertEquals("$\\frac{1}{2}$%", lines[3]);
+	assertEquals("\\end{document}", lines[4]);
+    }
+
+    @Test
+    void testPlain() {
+	final LatexDocument d = new LatexDocument("book");
+	d.beginDocument().plain("""
+		%%abcd
+		$%$
+				""");
+	d.endDocument();
+	final String latex = d.toString();
+	final String[] lines = latex.split(System.lineSeparator());
+	assertEquals(5, lines.length);
+	assertEquals("\\documentclass{book}", lines[0]);
+	assertEquals("\\begin{document}", lines[1]);
+	assertEquals("%%abcd", lines[2]);
+	assertEquals("$%$", lines[3]);
+	assertEquals("\\end{document}", lines[4]);
     }
 }

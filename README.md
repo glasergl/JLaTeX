@@ -23,9 +23,6 @@ I like math mode like this $\frac{1}{2}$
 Furthermore, the library provides functionality to serialize the LaTeX code into a file on the system, call a LaTeX compiler on the file (possibly multiple times) and clean up the compiler files such that only the PDF remains.
 If you have `pdflatex`, e.g., via [MikTex](https://miktex.org/), globally installed on your system, then it is sufficient to call `new GenerateDocument(d);` such that the PDF file is created at the current working directory of the java application.
 
-A more sophisticated example is a [cook book generator](https://github.com/glasergl/CustomCookBook) where recipes are represented with abstract data and then a PDF is generated out of the data.
-It contains a title page, table of contents, each recipe with ingredients + steps and more.
-
 # Maven Central
 Currently, this library is not in any dependency repository.
 Nevertheless, it is planned to do eventually.

@@ -23,7 +23,7 @@ I like math mode like this $\frac{1}{2}$
 Furthermore, the library provides functionality to serialize the LaTeX code into a file on the system, call a LaTeX compiler on the file (possibly multiple times) and clean up the compiler files such that only the PDF remains.
 If you have `pdflatex`, e.g., via [MikTex](https://miktex.org/), globally installed on your system, then it is sufficient to call `new GenerateDocument(d);` such that the PDF file is created at the current working directory of the java application.
 
-In my opinion Java (or any high level programming language) synergizes well with LaTeX, because one can use the control flow structures and datastructures of the high level programming language as well as the precise PDF layout control of LaTex.  
+In my opinion Java (or any high level programming language) synergizes well with LaTeX, because one can use the control flow structures and datastructures of the high level programming language as well as the precise PDF layout control of LaTeX.  
 
 # Maven Central
 Currently, this library is not in any dependency repository.

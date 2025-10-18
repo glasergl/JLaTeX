@@ -1,5 +1,5 @@
 # JLaTeX
-This tool allows creating latex code in Java to ultimately create dynamic PDF documents.
+This tool allows creating LaTeX code in Java to ultimately create dynamic PDF documents.
 For example
 ```java
 LatexDocument d = new LatexDocument("scrartcl", "a4paper, 12pt");

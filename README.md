@@ -1,4 +1,4 @@
-[![Maven Build with LaTeX](https://github.com/glasergl/jlatex/actions/workflows/maven-latex.yml/badge.svg)](https://github.com/glasergl/jlatex/actions)
+[![mvn package with pdflatex installed](https://github.com/glasergl/JLaTeX/actions/workflows/build.yml/badge.svg?branch=develop)](https://github.com/glasergl/JLaTeX/actions/workflows/build.yml)
 
 # JLaTeX
 This tool allows creating LaTeX code in Java to ultimately create dynamic PDF documents.

@@ -130,7 +130,7 @@ public final class GeneratePdf {
      * @throws InterruptedException
      */
     private ProcessResult startLatexCompilerProcess(final String pathOfTemporaryTexFile) throws IOException, InterruptedException {
-	final List<String> latexCompilerInvocationCommands = List.of(pathToLatexCompiler, "-interaction=nonstopmode", String.format("-output-directory=./%s", outputBuildDirectoryName), pathOfTemporaryTexFile);
+	final List<String> latexCompilerInvocationCommands = List.of(pathToLatexCompiler, "-interaction=nonstopmode", String.format("-output-directory=./%s/", outputBuildDirectoryName), pathOfTemporaryTexFile);
 	final ProcessBuilder latexCompilerInvocationBuilder = new ProcessBuilder(latexCompilerInvocationCommands);
 	log.info("Command {}", latexCompilerInvocationBuilder.command());
 	latexCompilerInvocationBuilder.redirectErrorStream(true);

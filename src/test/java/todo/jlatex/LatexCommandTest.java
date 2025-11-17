@@ -17,7 +17,7 @@ class LatexCommandTest {
 	final LatexCommand latexCommand = LatexCommand.command("abcd", "1", "2", "3", "4", "5", "6", "7", "8", "9");
 	assertEquals("\\abcd{1}{2}{3}{4}{5}{6}{7}{8}{9}", latexCommand.toString());
     }
-    
+
     @Test
     void testCommandWithBackslashPrependedAlready() {
 	final LatexCommand latexCommand = LatexCommand.command("\\test", "1");

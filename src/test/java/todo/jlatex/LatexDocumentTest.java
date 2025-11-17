@@ -121,4 +121,46 @@ class LatexDocumentTest {
 	assertEquals("$%$", lines[3]);
 	assertEquals("\\end{document}", lines[4]);
     }
+
+    @Test
+    void testIllegalBeginEnvironment() {
+	assertThrows(IllegalArgumentException.class, () -> {
+	    new LatexDocument("book").beginEnvironment("");
+	});
+
+	assertThrows(IllegalArgumentException.class, () -> {
+	    new LatexDocument("book").beginEnvironment("  \t   ");
+	});
+
+	assertThrows(IllegalArgumentException.class, () -> {
+	    new LatexDocument("book").beginEnvironment("  \t   ", Optional.of("abcd"));
+	});
+
+	assertThrows(IllegalArgumentException.class, () -> {
+	    new LatexDocument("book").beginEnvironment("", Optional.of("abcd"));
+	});
+
+	assertThrows(IllegalArgumentException.class, () -> {
+	    new LatexDocument("book").beginEnvironment("", Optional.empty());
+	});
+
+	assertThrows(IllegalArgumentException.class, () -> {
+	    new LatexDocument("book").beginEnvironment("abcd", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10");
+	});
+    }
+
+    @Test
+    void testIllegalEndEnvironments() {
+	assertThrows(IllegalArgumentException.class, () -> {
+	    new LatexDocument("book").beginEnvironment("abcd", "1", "2", "3", "4", "5", "6", "7", "8", "9").endEnvironment("");
+	});
+
+	assertThrows(IllegalArgumentException.class, () -> {
+	    new LatexDocument("book").beginEnvironment("abcd", "1", "2", "3", "4", "5", "6", "7", "8", "9").endEnvironment("    ");
+	});
+
+	assertThrows(IllegalArgumentException.class, () -> {
+	    new LatexDocument("book").beginEnvironment("abcd", "1", "2").endEnvironment("\n");
+	});
+    }
 }

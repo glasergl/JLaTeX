@@ -43,6 +43,9 @@ public final class GeneratePdf {
 	if (pdfFileName.isBlank() || pdfFileName.isEmpty() || pathToLatexCompiler.isEmpty() || pathToLatexCompiler.isBlank() || numberOfLatexCompilerInvocations < 1 || outputBuildDirectoryName.isBlank() || outputBuildDirectoryName.isEmpty()) {
 	    throw new IllegalArgumentException();
 	}
+	if (!latexCompilerIsInstalled(pathToLatexCompiler)) {
+	    throw new IllegalStateException();
+	}
 	this.document = document;
 	this.pdfFileName = pdfFileName;
 	this.pathToLatexCompiler = pathToLatexCompiler;
@@ -130,20 +133,6 @@ public final class GeneratePdf {
     }
 
     /**
-     * @param process of which the entire standard output should be read
-     * @return The content of the standard outputstream of the given process
-     */
-    private String getStandardOutputStreamContent(final Process process) {
-	try {
-	    final InputStream standardOutputStream = process.getInputStream(); // Outputstream of the process is an inputstream on Java side
-	    final byte[] content = standardOutputStream.readAllBytes();
-	    return new String(content, StandardCharsets.UTF_8);
-	} catch (final IOException e) {
-	    return "";
-	}
-    }
-
-    /**
      * Recursively iterates over each file in the given directory to delete them and
      * then the overall folder, too
      * 
@@ -159,13 +148,20 @@ public final class GeneratePdf {
 		    try {
 			Files.delete(path);
 		    } catch (IOException e) {
-			throw new RuntimeException("Unable to delete LaTeX compiler files", e);
+			throw new IllegalStateException("Unable to delete LaTeX compiler files", e);
 		    }
 		});
 	    }
 	} catch (final IOException e) {
 	    throw new RuntimeException("Unable to delete LaTeX compiler files", e);
 	}
+    }
+
+    /**
+     * @return Whether all process results were successful
+     */
+    public boolean wasSuccessful() {
+	return latexCompilerProcessResults.stream().allMatch(ProcessResult::successful);
     }
 
     /**
@@ -177,14 +173,44 @@ public final class GeneratePdf {
     }
 
     /**
-     * Class to represent the required information of a process execution
+     * Checks existence of latex compiler by invoking it with the --version flag
+     * 
+     * @param compilerPath - path to latex compiler executable file, or just the
+     *                     compiler name if it's globally installed, e.g.,
+     *                     "pdflatex"
+     * @return Whether the given latex compiler is installed and can be invoked,
+     *         assumes false if an exception occurs
+     * @throws IllegalArgumentException If the given path is empty or just
+     *                                  whitespace
      */
-    public record ProcessResult(int exitCode, String outputStreamContent) {
-	/**
-	 * @return Whether the exit code is 0
-	 */
-	public boolean successful() {
-	    return exitCode == 0;
+    public static boolean latexCompilerIsInstalled(final String compilerPath) {
+	try {
+	    if (compilerPath.isEmpty() || compilerPath.isBlank()) {
+		throw new IllegalArgumentException();
+	    }
+	    final List<String> latexVersionCommand = List.of(compilerPath, "--version");
+	    final ProcessBuilder latexCompilerInvocationBuilder = new ProcessBuilder(latexVersionCommand);
+	    latexCompilerInvocationBuilder.redirectErrorStream(true);
+	    final Process latexCompilerInvocation = latexCompilerInvocationBuilder.start();
+	    getStandardOutputStreamContent(latexCompilerInvocation); // must be consumed such that process is not frozen by operating system
+	    return latexCompilerInvocation.waitFor() == 0;
+	} catch (final IOException | InterruptedException e) {
+	    return false;
+	}
+    }
+
+    /**
+     * @param process of which the entire standard output should be read
+     * @return The content of the standard outputstream of the given process, empty
+     *         string when encountering an exception
+     */
+    private static String getStandardOutputStreamContent(final Process process) {
+	try {
+	    final InputStream standardOutputStream = process.getInputStream(); // Outputstream of the process is an inputstream on Java side
+	    final byte[] content = standardOutputStream.readAllBytes();
+	    return new String(content, StandardCharsets.UTF_8);
+	} catch (final IOException e) {
+	    return "";
 	}
     }
 }

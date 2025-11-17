@@ -3,6 +3,7 @@ package todo.jlatex;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -11,8 +12,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
-
-import todo.jlatex.GeneratePdf.ProcessResult;
 
 class GeneratePdfTest {
     @Test
@@ -32,6 +31,8 @@ class GeneratePdfTest {
 	for (final ProcessResult latexCompilerProcessResult : l.getProcessResults()) {
 	    assertEquals(0, latexCompilerProcessResult.exitCode());
 	}
+	assertEquals(3, l.getProcessResults().size());
+	assertTrue(l.wasSuccessful());
 	assertTrue(Files.exists(Path.of("./generated-document.pdf")));
 	assertFalse(Files.exists(Path.of("./build/")));
 	assertFalse(Files.exists(Path.of("./generated-document.tex")));
@@ -46,8 +47,9 @@ class GeneratePdfTest {
     void testErrorExecutionWithNonExistingCompiler() {
 	final LatexDocument d = new LatexDocument("article");
 	d.beginDocument().format("Hello").endDocument();
-	final GeneratePdf l = new GeneratePdf(d, "generated-document", "pdflatex42", 4, "build");
-	assertTrue(l.getProcessResults().isEmpty());
+	assertThrows(IllegalStateException.class, () -> {
+	    new GeneratePdf(d, "generated-document", "pdflatex42", 4, "build");
+	});
 	assertFalse(Files.exists(Path.of("./generated-document.pdf")));
 	assertFalse(Files.exists(Path.of("./build/")));
 	assertFalse(Files.exists(Path.of("./generated-document.tex")));
@@ -65,5 +67,20 @@ class GeneratePdfTest {
 	assertFalse(Files.exists(Path.of("./generated-document.pdf")));
 	assertFalse(Files.exists(Path.of("./build/")));
 	assertFalse(Files.exists(Path.of("./generated-document.tex")));
+    }
+
+    @Test
+    void testLatexCompilerIsInstalled() {
+	assertTrue(GeneratePdf.latexCompilerIsInstalled("pdflatex"));
+	assertFalse(GeneratePdf.latexCompilerIsInstalled("abcdlatex"));
+	assertThrows(IllegalArgumentException.class, () -> {
+	    GeneratePdf.latexCompilerIsInstalled("");
+	});
+	assertThrows(IllegalArgumentException.class, () -> {
+	    GeneratePdf.latexCompilerIsInstalled("     ");
+	});
+	assertThrows(IllegalArgumentException.class, () -> {
+	    GeneratePdf.latexCompilerIsInstalled("\t   ");
+	});
     }
 }

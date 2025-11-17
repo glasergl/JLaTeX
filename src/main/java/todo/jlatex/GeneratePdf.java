@@ -91,11 +91,13 @@ public final class GeneratePdf {
      * @return Exit codes of the latex compiler process (multiple invocations)
      */
     private List<ProcessResult> invokeLatexCompiler() {
-	final String pathOfTemporaryTexFile = String.format("./%s.tex", pdfFileName);
+	final Path pathOfTemporaryTexFile = Path.of(String.format("./%s.tex", pdfFileName));
+	final Path outputDirectoryPath = Path.of(String.format("./%s/", outputBuildDirectoryName));
 	try {
 	    boolean allLatexCompilerInvocationsSuccessful = true;
 	    final List<ProcessResult> processResults = new ArrayList<>();
-	    Files.writeString(Path.of(pathOfTemporaryTexFile), document.toString());
+	    Files.writeString(pathOfTemporaryTexFile, document.toString());
+	    Files.createDirectories(outputDirectoryPath);
 	    log.info("Invoke {} {} times", pathToLatexCompiler, numberOfLatexCompilerInvocations);
 	    log.info("Working Directory {}", System.getProperty("user.dir"));
 	    for (int i = 0; i < numberOfLatexCompilerInvocations; i++) {
@@ -114,7 +116,7 @@ public final class GeneratePdf {
 	} catch (final IOException | InterruptedException e) {
 	    return List.of();
 	} finally {
-	    deleteLatexCompilerFiles(Path.of(String.format("./%s/", outputBuildDirectoryName)), Path.of(pathOfTemporaryTexFile));
+	    deleteLatexCompilerFiles(outputDirectoryPath, pathOfTemporaryTexFile);
 	}
     }
 
@@ -129,8 +131,8 @@ public final class GeneratePdf {
      * @throws IOException
      * @throws InterruptedException
      */
-    private ProcessResult startLatexCompilerProcess(final String pathOfTemporaryTexFile) throws IOException, InterruptedException {
-	final List<String> latexCompilerInvocationCommands = List.of(pathToLatexCompiler, "-interaction=nonstopmode", String.format("-output-directory=./%s/", outputBuildDirectoryName), pathOfTemporaryTexFile);
+    private ProcessResult startLatexCompilerProcess(final Path pathOfTemporaryTexFile) throws IOException, InterruptedException {
+	final List<String> latexCompilerInvocationCommands = List.of(pathToLatexCompiler, "-interaction=nonstopmode", String.format("-output-directory=./%s/", outputBuildDirectoryName), pathOfTemporaryTexFile.toString());
 	final ProcessBuilder latexCompilerInvocationBuilder = new ProcessBuilder(latexCompilerInvocationCommands);
 	log.info("Command {}", latexCompilerInvocationBuilder.command());
 	latexCompilerInvocationBuilder.redirectErrorStream(true);

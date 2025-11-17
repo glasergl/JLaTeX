@@ -10,9 +10,12 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Invokes the latex compiler to build the PDF for a LatexDocument
  */
+@Slf4j
 public final class GeneratePdf {
     private static final String DEFAULT_PATH_TO_LATEX_COMPILER = "pdflatex";
     private static final String DEFAULT_PDF_FILE_NAME = "generated-document";
@@ -52,6 +55,7 @@ public final class GeneratePdf {
 	this.numberOfLatexCompilerInvocations = numberOfLatexCompilerInvocations;
 	this.outputBuildDirectoryName = outputBuildDirectoryName;
 	this.latexCompilerProcessResults = invokeLatexCompiler();
+	log.info("Process-Return Codes {}", latexCompilerProcessResults.stream().map(ProcessResult::exitCode).toList());
     }
 
     /**
@@ -92,11 +96,14 @@ public final class GeneratePdf {
 	    boolean allLatexCompilerInvocationsSuccessful = true;
 	    final List<ProcessResult> processResults = new ArrayList<>();
 	    Files.writeString(Path.of(pathOfTemporaryTexFile), document.toString());
+	    log.info("Invoke {} {} times", pathToLatexCompiler, numberOfLatexCompilerInvocations);
+	    log.info("Working Directory {}", System.getProperty("user.dir"));
 	    for (int i = 0; i < numberOfLatexCompilerInvocations; i++) {
 		final ProcessResult processResult = startLatexCompilerProcess(pathOfTemporaryTexFile);
 		processResults.add(processResult);
 		if (!processResult.successful()) {
 		    allLatexCompilerInvocationsSuccessful = false;
+		    log.error(processResult.outputStreamContent());
 		    break;
 		}
 	    }
@@ -125,8 +132,10 @@ public final class GeneratePdf {
     private ProcessResult startLatexCompilerProcess(final String pathOfTemporaryTexFile) throws IOException, InterruptedException {
 	final List<String> latexCompilerInvocationCommands = List.of(pathToLatexCompiler, "-interaction=nonstopmode", String.format("-output-directory=%s", outputBuildDirectoryName), pathOfTemporaryTexFile);
 	final ProcessBuilder latexCompilerInvocationBuilder = new ProcessBuilder(latexCompilerInvocationCommands);
+	log.info("Command {}", latexCompilerInvocationBuilder.command());
 	latexCompilerInvocationBuilder.redirectErrorStream(true);
 	final Process latexCompilerInvocation = latexCompilerInvocationBuilder.start();
+	log.info("Compiler PID {}", latexCompilerInvocation.pid());
 	final String latexCompilerOutput = getStandardOutputStreamContent(latexCompilerInvocation);
 	final int exitCode = latexCompilerInvocation.waitFor();
 	return new ProcessResult(exitCode, latexCompilerOutput);
@@ -137,15 +146,18 @@ public final class GeneratePdf {
      * then the overall folder, too
      * 
      * @param pathToLatexCompilerFiles
+     * @param pathOfTemporaryTexFile
      */
     private void deleteLatexCompilerFiles(final Path pathToLatexCompilerFiles, final Path pathOfTemporaryTexFile) {
 	try {
 	    if (Files.exists(pathOfTemporaryTexFile)) {
+		log.info("Deleting {}", pathOfTemporaryTexFile);
 		Files.delete(pathOfTemporaryTexFile);
 	    }
 	    if (Files.exists(pathToLatexCompilerFiles)) {
 		Files.walk(pathToLatexCompilerFiles).sorted(Comparator.reverseOrder()).forEach(path -> {
 		    try {
+			log.info("Deleting {}", path);
 			Files.delete(path);
 		    } catch (IOException e) {
 			throw new IllegalStateException("Unable to delete LaTeX compiler files", e);

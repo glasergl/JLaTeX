@@ -47,7 +47,7 @@ public final class GeneratePdf {
 			throw new IllegalArgumentException();
 		}
 		if (!latexCompilerIsInstalled(pathToLatexCompiler)) {
-			throw new IllegalStateException();
+			throw new IllegalStateException(String.format("%s LaTeX compiler not found", pathToLatexCompiler));
 		}
 		this.document = document;
 		this.pdfFileName = pdfFileName;

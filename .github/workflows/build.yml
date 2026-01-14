@@ -3,7 +3,7 @@ name: mvn package with pdflatex installed
 on:
   push:
     branches:
-      - develop
+      - development
 
 jobs:
   build:

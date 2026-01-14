@@ -91,8 +91,8 @@ public final class GeneratePdf {
 	 * @return Exit codes of the latex compiler process (multiple invocations)
 	 */
 	private List<ProcessResult> invokeLatexCompiler() {
-		final Path pathOfTemporaryTexFile = Path.of(String.format("./%s.tex", pdfFileName));
-		final Path outputDirectoryPath = Path.of(String.format("./%s/", outputBuildDirectoryName));
+		final Path pathOfTemporaryTexFile = Path.of(pdfFileName + ".tex");
+		final Path outputDirectoryPath = Path.of(outputBuildDirectoryName);
 		try {
 			boolean allLatexCompilerInvocationsSuccessful = true;
 			final List<ProcessResult> processResults = new ArrayList<>();
@@ -110,7 +110,7 @@ public final class GeneratePdf {
 				}
 			}
 			if (allLatexCompilerInvocationsSuccessful) {
-				Files.move(Path.of(String.format("./%s/%s.pdf", outputBuildDirectoryName, pdfFileName)), Path.of(String.format("./%s.pdf", pdfFileName)), StandardCopyOption.REPLACE_EXISTING);
+				Files.move(Path.of(outputBuildDirectoryName, pdfFileName + ".pdf"), Path.of(pdfFileName + ".pdf"), StandardCopyOption.REPLACE_EXISTING);
 			}
 			return processResults;
 		} catch (final IOException | InterruptedException e) {

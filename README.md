@@ -1,4 +1,4 @@
-[![mvn package with pdflatex installed](https://github.com/glasergl/JLaTeX/actions/workflows/build.yml/badge.svg?branch=develop)](https://github.com/glasergl/JLaTeX/actions/workflows/build.yml)
+[![build](https://github.com/glasergl/JLaTeX/actions/workflows/build.yml/badge.svg?branch=development)](https://github.com/glasergl/JLaTeX/actions/workflows/build.yml)
 
 # JLaTeX
 This tool allows creating LaTeX code in Java to ultimately create dynamic PDF documents.

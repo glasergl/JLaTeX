@@ -1,4 +1,4 @@
-name: mvn package with pdflatex installed
+name: build
 
 on:
   push:

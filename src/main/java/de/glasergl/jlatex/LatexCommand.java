@@ -1,4 +1,4 @@
-package todo.jlatex;
+package de.glasergl.jlatex;
 
 import java.util.Optional;
 

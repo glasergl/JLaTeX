@@ -1,4 +1,4 @@
-package todo.jlatex;
+package de.glasergl.jlatex.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -12,6 +12,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
+
+import de.glasergl.jlatex.GeneratePdf;
+import de.glasergl.jlatex.LatexCommand;
+import de.glasergl.jlatex.LatexDocument;
+import de.glasergl.jlatex.ProcessResult;
 
 class GeneratePdfTest {
 	@Test

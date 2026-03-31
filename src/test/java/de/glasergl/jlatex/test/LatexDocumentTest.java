@@ -1,4 +1,4 @@
-package todo.jlatex;
+package de.glasergl.jlatex.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -7,6 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
+
+import de.glasergl.jlatex.LatexCommand;
+import de.glasergl.jlatex.LatexDocument;
 
 class LatexDocumentTest {
 	@Test

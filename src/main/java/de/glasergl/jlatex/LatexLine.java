@@ -1,4 +1,4 @@
-package todo.jlatex;
+package de.glasergl.jlatex;
 
 /**
  * A LatexLine is the base component to build a LaTeX document.
@@ -12,7 +12,7 @@ public class LatexLine {
 	 *                                  character, because a LatexLine represents a
 	 *                                  single line
 	 */
-	protected final void addContent(final String content) {
+	public final void addContent(final String content) {
 		if (content.contains("\n")) {
 			throw new IllegalArgumentException("A line must not contain the new line character");
 		}

@@ -1,9 +1,11 @@
-package todo.jlatex;
+package de.glasergl.jlatex.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
+
+import de.glasergl.jlatex.LatexLine;
 
 class LatexLineTest {
 	@Test

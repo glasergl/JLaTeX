@@ -1,4 +1,4 @@
-package todo.jlatex;
+package de.glasergl.jlatex;
 
 /**
  * Class to represent the required information of a process execution

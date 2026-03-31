@@ -1,4 +1,4 @@
-package todo.jlatex;
+package de.glasergl.jlatex;
 
 import java.util.ArrayList;
 import java.util.List;

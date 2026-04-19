@@ -33,7 +33,7 @@ Nevertheless, it is planned to do eventually.
 In order to try the library, clone this repository, run `mvn install` and then the import
 ```xml
 <dependency>
-  <groupId>todo</groupId>
+  <groupId>de.glasergl</groupId>
   <artifactId>jlatex</artifactId>
   <version>1.0.0</version>
 </dependency>
